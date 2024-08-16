@@ -48,7 +48,7 @@ yarn build
     apiHost: 'http://localhost:3000',
   });
 </script>
-<flowise-fullchatbot></flowise-fullchatbot>
+<n-fullchatbot></n-fullchatbot>
 ```
 
 To enable full screen, add `margin: 0` to <code>body</code> style, and confirm you don't set height and width
@@ -124,7 +124,7 @@ You can also customize chatbot with different configuration
       chatWindow: {
         showTitle: true,
         showAgentMessages: true,
-        title: 'Flowise Bot',
+        title: 'Chat Bot',
         titleAvatarSrc: 'https://raw.githubusercontent.com/walkxcode/dashboard-icons/main/svg/google-messages.svg',
         welcomeMessage: 'Hello! This is custom welcome message',
         errorMessage: 'This is a custom error message',
@@ -166,8 +166,8 @@ You can also customize chatbot with different configuration
         footer: {
           textColor: '#303235',
           text: 'Powered by',
-          company: 'Flowise',
-          companyLink: 'https://flowiseai.com',
+          company: 'NexEnt',
+          companyLink: 'https://nexent.ai',
         }
       },
     },
