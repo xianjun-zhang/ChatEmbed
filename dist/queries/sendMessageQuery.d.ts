@@ -32,7 +32,7 @@ export type UpdateFeedbackRequest = {
     body?: Partial<FeedbackInput>;
 };
 export type LeadCaptureInput = {
-    chatflowid: string;
+    chatflowId: string;
     chatId: string;
     name?: string;
     email?: string;

@@ -40,7 +40,7 @@ export type UpdateFeedbackRequest = {
 };
 
 export type LeadCaptureInput = {
-  chatflowid: string;
+  chatflowId: string;
   chatId: string;
   name?: string;
   email?: string;
