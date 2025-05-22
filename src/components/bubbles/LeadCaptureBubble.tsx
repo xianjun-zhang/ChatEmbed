@@ -50,7 +50,7 @@ export const LeadCaptureBubble = (props: Props) => {
 
     if (res.success) {
       const body: LeadCaptureInput = {
-        chatflowid: props.chatflowid,
+        chatflowId: props.chatflowid,
         chatId: props.chatId,
         name: leadName(),
         email: leadEmail(),
