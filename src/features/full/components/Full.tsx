@@ -2,6 +2,8 @@ import styles from '../../../assets/index.css';
 import { Bot, BotProps } from '@/components/Bot';
 import { BubbleParams } from '@/features/bubble/types';
 import { createMemo, createSignal, onCleanup, onMount, Show } from 'solid-js';
+import bgc1 from '@/assets/bgc1.svg';
+import bgc2 from '@/assets/bgc2.png';
 
 const defaultButtonColor = '#transparent';
 const defaultIconColor = 'black';
@@ -58,7 +60,7 @@ export const Full = (props: FullProps, { element }: { element: HTMLElement }) =>
                 ? props.theme?.chatWindow?.backgroundImage.match(regex())
                   ? props.theme?.chatWindow?.backgroundImage
                   : `url(${props.theme?.chatWindow?.backgroundImage})`
-                : 'url(https://cdn.jsdelivr.net/gh/Ark6Rj/ChatEmbed/src/assets/bgc1.svg), url(https://cdn.jsdelivr.net/gh/Ark6Rj/ChatEmbed/src/assets/bgc2.png), linear-gradient(173deg, #f4f9ff -24.94%, #edf1f9 103.15%)',
+                : `url(${bgc1}), url(${bgc2}), linear-gradient(173deg, #f4f9ff -24.94%, #edf1f9 103.15%)`,
             'background-size': '100%',
             'background-position': '100% 0',
             'background-attachment': 'fixed',

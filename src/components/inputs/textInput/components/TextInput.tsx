@@ -5,6 +5,8 @@ import { SendButton } from '@/components/buttons/SendButton';
 import { FileEvent, UploadsConfig } from '@/components/Bot';
 import { ImageUploadButton } from '@/components/buttons/ImageUploadButton';
 import { RecordAudioButton } from '@/components/buttons/RecordAudioButton';
+import sendSound from '@/assets/send_message.mp3';
+// Use CDN URL for reliable asset loading
 
 type Props = {
   placeholder?: string;
@@ -28,8 +30,7 @@ type Props = {
 
 const defaultBackgroundColor = '#ffffff';
 const defaultTextColor = '#303235';
-// CDN link for default send sound
-const defaultSendSound = 'https://cdn.jsdelivr.net/gh/Ark6Rj/ChatEmbed/src/assets/send_message.mp3';
+const defaultSendSound = sendSound;
 
 export const TextInput = (props: Props) => {
   const [inputValue, setInputValue] = createSignal(props.defaultValue ?? '');
