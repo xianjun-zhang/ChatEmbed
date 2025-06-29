@@ -1,6 +1,6 @@
 import { BotMessageTheme, FooterTheme, TextInputTheme, UserMessageTheme, FeedbackTheme } from '@/features/bubble/types';
-export type FileEvent<T = EventTarget> = {
-    target: T;
+export type FileEvent<T = Element> = {
+    target: EventTarget & T;
 };
 export type FormEvent<T = EventTarget> = {
     preventDefault: () => void;
