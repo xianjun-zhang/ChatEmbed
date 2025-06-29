@@ -31,14 +31,14 @@ export const GuestBubble = (props: Props) => {
   });
 
   return (
-    <div class="flex justify-end mb-2 items-end guest-container" style={{ 'margin-left': '50px' }}>
+    <div class="flex justify-end mb-2 guest-container" style={{ 'margin-left': '50px' }}>
       <div
-        class="max-w-full flex flex-col justify-center items-start chatbot-guest-bubble px-4 py-2 gap-2 mr-2"
+        class="max-w-full flex flex-col justify-center items-start chatbot-guest-bubble px-3 py-3 gap-2 mr-2"
         data-testid="guest-bubble"
         style={{
           'background-color': props.backgroundColor ?? defaultBackgroundColor,
           color: props.textColor ?? defaultTextColor,
-          'border-radius': '6px',
+          'border-radius': '12px 0 12px 12px',
         }}
       >
         {props.message.fileUploads && props.message.fileUploads.length > 0 && (
@@ -68,7 +68,7 @@ export const GuestBubble = (props: Props) => {
         {props.message.message && (
           <span
             ref={userMessageEl}
-            class="mr-2 whitespace-pre-wrap"
+            class="whitespace-pre-wrap break-words overflow-wrap-anywhere break-all"
             style={{ 'font-size': props.fontSize ? `${props.fontSize}px` : `${defaultFontSize}px` }}
           />
         )}

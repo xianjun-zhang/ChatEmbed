@@ -26,10 +26,10 @@ type Props = {
   handleActionClick: (label: string, action: IAction | undefined | null) => void;
 };
 
-const defaultBackgroundColor = '#f7f8ff';
+const defaultBackgroundColor = '#fff';
 const defaultTextColor = '#303235';
 const defaultFontSize = 16;
-const defaultFeedbackColor = '#3B81F6';
+const defaultFeedbackColor = '#42464E';
 
 Marked.setOptions({ isNoP: true });
 
@@ -99,7 +99,7 @@ export const BotBubble = (props: Props) => {
         setFeedbackId(id);
         setShowFeedbackContentModal(true);
         // update the thumbs up color state
-        setThumbsUpColor('#006400');
+        setThumbsUpColor('#1664FF');
       }
     }
   };
@@ -127,7 +127,7 @@ export const BotBubble = (props: Props) => {
         setFeedbackId(id);
         setShowFeedbackContentModal(true);
         // update the thumbs down color state
-        setThumbsDownColor('#8B0000');
+        setThumbsDownColor('#1664FF');
       }
     }
   };
@@ -192,115 +192,122 @@ export const BotBubble = (props: Props) => {
         <Show when={props.showAvatar}>
           <Avatar initialAvatarSrc={props.avatarSrc} />
         </Show>
-        <div class="flex flex-col justify-start">
-          {props.showAgentMessages && props.message.agentReasoning && (
-            <details ref={botDetailsEl} class="mb-2 px-4 py-2 ml-2 chatbot-host-bubble rounded-[6px]">
-              <summary class="cursor-pointer">
-                <span class="italic">Agent Messages</span>
-              </summary>
-              <br />
-              <For each={props.message.agentReasoning}>
-                {(agent) => {
-                  const agentMessages = agent.messages ?? [];
-                  let msgContent = agent.instructions || (agentMessages.length > 1 ? agentMessages.join('\\n') : agentMessages[0]);
-                  if (agentMessages.length === 0 && !agent.instructions) msgContent = `<p>Finished</p>`;
-                  return (
-                    <AgentReasoningBubble
-                      agentName={agent.agentName ?? ''}
-                      agentMessage={msgContent}
-                      backgroundColor={props.backgroundColor}
-                      textColor={props.textColor}
-                      fontSize={props.fontSize}
-                    />
-                  );
+        <div class="flex flex-col  content-wrapper group">
+          <div class="flex flex-col justify-start flex-1">
+            {props.showAgentMessages && props.message.agentReasoning && (
+              <details ref={botDetailsEl} class="mb-2 px-4 py-2 ml-2 chatbot-host-bubble rounded-[6px]">
+                <summary class="cursor-pointer">
+                  <span class="italic">Agent Messages</span>
+                </summary>
+                <br />
+                <For each={props.message.agentReasoning}>
+                  {(agent) => {
+                    const agentMessages = agent.messages ?? [];
+                    let msgContent = agent.instructions || (agentMessages.length > 1 ? agentMessages.join('\\n') : agentMessages[0]);
+                    if (agentMessages.length === 0 && !agent.instructions) msgContent = `<p>Finished</p>`;
+                    return (
+                      <AgentReasoningBubble
+                        agentName={agent.agentName ?? ''}
+                        agentMessage={msgContent}
+                        backgroundColor={props.backgroundColor}
+                        textColor={props.textColor}
+                        fontSize={props.fontSize}
+                      />
+                    );
+                  }}
+                </For>
+              </details>
+            )}
+            {props.message.message && (
+              <span
+                ref={botMessageEl}
+                class="px-3 py-3 ml-2 max-w-full chatbot-host-bubble prose"
+                data-testid="host-bubble"
+                style={{
+                  'background-color': props.backgroundColor ?? defaultBackgroundColor,
+                  color: props.textColor ?? defaultTextColor,
+                  'border-radius': '0 12px 12px 12px',
+                  'font-size': props.fontSize ? `${props.fontSize}px` : `${defaultFontSize}px`,
                 }}
-              </For>
-            </details>
-          )}
-          {props.message.message && (
-            <span
-              ref={botMessageEl}
-              class="px-4 py-2 ml-2 max-w-full chatbot-host-bubble prose"
-              data-testid="host-bubble"
-              style={{
-                'background-color': props.backgroundColor ?? defaultBackgroundColor,
-                color: props.textColor ?? defaultTextColor,
-                'border-radius': '6px',
-                'font-size': props.fontSize ? `${props.fontSize}px` : `${defaultFontSize}px`,
-              }}
-            />
-          )}
-          {props.message.action && (
-            <div class="px-4 py-2 flex flex-row justify-start space-x-2">
-              <For each={props.message.action.elements || []}>
-                {(action) => {
-                  return (
-                    <>
-                      {action.type === 'approve-button' ? (
-                        <button
-                          type="button"
-                          class="px-4 py-2 font-medium text-green-600 border border-green-600 rounded-full hover:bg-green-600 hover:text-white transition-colors duration-300 flex items-center space-x-2"
-                          onClick={() => props.handleActionClick(action.label, props.message.action)}
-                        >
-                          <TickIcon />
-                          &nbsp;
-                          {action.label}
-                        </button>
-                      ) : action.type === 'reject-button' ? (
-                        <button
-                          type="button"
-                          class="px-4 py-2 font-medium text-red-600 border border-red-600 rounded-full hover:bg-red-600 hover:text-white transition-colors duration-300 flex items-center space-x-2"
-                          onClick={() => props.handleActionClick(action.label, props.message.action)}
-                        >
-                          <XIcon isCurrentColor={true} />
-                          &nbsp;
-                          {action.label}
-                        </button>
-                      ) : (
-                        <button>{action.label}</button>
-                      )}
-                    </>
-                  );
-                }}
-              </For>
-            </div>
-          )}
-        </div>
-      </div>
-      <div>
-        {props.chatFeedbackStatus && props.message.messageId && (
-          <>
-            <div class={`flex items-center px-2 pb-2 ${props.showAvatar ? 'ml-10' : ''}`}>
-              <CopyToClipboardButton feedbackColor={props.feedbackColor} onClick={() => copyMessageToClipboard()} />
-              <Show when={copiedMessage()}>
+              />
+            )}
+            {props.message.action && (
+              <div class="px-4 py-2 flex flex-row justify-start space-x-2">
+                <For each={props.message.action.elements || []}>
+                  {(action) => {
+                    return (
+                      <>
+                        {action.type === 'approve-button' ? (
+                          <button
+                            type="button"
+                            class="px-4 py-2 font-medium text-green-600 border border-green-600 rounded-full hover:bg-green-600 hover:text-white transition-colors duration-300 flex items-center space-x-2"
+                            onClick={() => props.handleActionClick(action.label, props.message.action)}
+                          >
+                            <TickIcon />
+                            &nbsp;
+                            {action.label}
+                          </button>
+                        ) : action.type === 'reject-button' ? (
+                          <button
+                            type="button"
+                            class="px-4 py-2 font-medium text-red-600 border border-red-600 rounded-full hover:bg-red-600 hover:text-white transition-colors duration-300 flex items-center space-x-2"
+                            onClick={() => props.handleActionClick(action.label, props.message.action)}
+                          >
+                            <XIcon isCurrentColor={true} />
+                            &nbsp;
+                            {action.label}
+                          </button>
+                        ) : (
+                          <button>{action.label}</button>
+                        )}
+                      </>
+                    );
+                  }}
+                </For>
+              </div>
+            )}
+          </div>
+          {/* TODO:Temporary annotation  */}
+          {/* props.chatFeedbackStatus && props.message.messageId */}
+          {true && (
+            <>
+              <div
+                class={`button-group opacity-0 group-hover:opacity-100 transition-opacity flex items-center px-2 pb-2 justify-end pr-0 ${
+                  props.showAvatar ? 'ml-10' : ''
+                }`}
+              >
+                {/* <Show when={copiedMessage()}>
                 <div class="copied-message" style={{ color: props.feedbackColor ?? defaultFeedbackColor }}>
                   Copied!
                 </div>
-              </Show>
-              {rating() === '' || rating() === 'THUMBS_UP' ? (
-                <ThumbsUpButton feedbackColor={thumbsUpColor()} isDisabled={rating() === 'THUMBS_UP'} rating={rating()} onClick={onThumbsUpClick} />
-              ) : null}
-              {rating() === '' || rating() === 'THUMBS_DOWN' ? (
-                <ThumbsDownButton
-                  feedbackColor={thumbsDownColor()}
-                  isDisabled={rating() === 'THUMBS_DOWN'}
-                  rating={rating()}
-                  onClick={onThumbsDownClick}
+              </Show> */}
+                {rating() === '' || rating() === 'THUMBS_UP' ? (
+                  <ThumbsUpButton feedbackColor={thumbsUpColor()} isDisabled={rating() === 'THUMBS_UP'} rating={rating()} onClick={onThumbsUpClick} />
+                ) : null}
+                {rating() === '' || rating() === 'THUMBS_DOWN' ? (
+                  <ThumbsDownButton
+                    feedbackColor={thumbsDownColor()}
+                    isDisabled={rating() === 'THUMBS_DOWN'}
+                    rating={rating()}
+                    onClick={onThumbsDownClick}
+                  />
+                ) : null}
+                <CopyToClipboardButton feedbackColor={props.feedbackColor} onClick={() => copyMessageToClipboard()} />
+              </div>
+              <Show when={showFeedbackContentDialog()}>
+                <FeedbackContentDialog
+                  isOpen={showFeedbackContentDialog()}
+                  onClose={() => setShowFeedbackContentModal(false)}
+                  onSubmit={submitFeedbackContent}
+                  backgroundColor={props.backgroundColor}
+                  textColor={props.textColor}
                 />
-              ) : null}
-            </div>
-            <Show when={showFeedbackContentDialog()}>
-              <FeedbackContentDialog
-                isOpen={showFeedbackContentDialog()}
-                onClose={() => setShowFeedbackContentModal(false)}
-                onSubmit={submitFeedbackContent}
-                backgroundColor={props.backgroundColor}
-                textColor={props.textColor}
-              />
-            </Show>
-          </>
-        )}
+              </Show>
+            </>
+          )}
+        </div>
       </div>
+      {/* <div></div> */}
     </div>
   );
 };

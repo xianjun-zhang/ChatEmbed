@@ -305,7 +305,7 @@ export const Bot = (botProps: BotProps & { class?: string }) => {
   // Define the audioRef
   let audioRef: HTMLAudioElement | undefined;
   // CDN link for default receive sound
-  const defaultReceiveSound = 'https://cdn.jsdelivr.net/gh/xianjun-zhang/ChatEmbed@latest/src/assets/receive_message.mp3';
+  const defaultReceiveSound = 'https://cdn.jsdelivr.net/gh/Ark6Rj/ChatEmbed/src/assets/receive_message.mp3';
   const playReceiveSound = () => {
     if (props.textInput?.receiveMessageSound) {
       let audioSrc = defaultReceiveSound;
@@ -992,7 +992,7 @@ export const Bot = (botProps: BotProps & { class?: string }) => {
               </>
             </Show>
             <Show when={props.title}>
-              <span class="px-3 whitespace-pre-wrap font-semibold max-w-full">{props.title}</span>
+              <span class="px-3 whitespace-pre-wrap font-semibold max-w-full text-[#000]">{props.title}</span>
             </Show>
             <div style={{ flex: 1 }} />
             <DeleteButton
@@ -1009,7 +1009,7 @@ export const Bot = (botProps: BotProps & { class?: string }) => {
         <div class="flex flex-col w-full h-full justify-start z-0">
           <div
             ref={chatContainer}
-            class="overflow-y-scroll flex flex-col flex-grow min-w-full w-full px-3 pt-[70px] relative scrollable-container chatbot-chat-view scroll-smooth"
+            class="overflow-y-scroll flex flex-col flex-grow min-w-full w-full px-3 mt-[70px] relative scrollable-container chatbot-chat-view scroll-smooth"
           >
             <For each={[...messages()]}>
               {(message, index) => {

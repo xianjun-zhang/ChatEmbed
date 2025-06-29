@@ -1,4 +1,4 @@
-import { createSignal, Show, splitProps, onCleanup, createEffect } from 'solid-js';
+import { createSignal, Show, splitProps, onCleanup, createEffect, createMemo } from 'solid-js';
 import styles from '../../../assets/index.css';
 import { BubbleButton } from './BubbleButton';
 import { BubbleParams } from '../types';
@@ -6,8 +6,8 @@ import { Bot, BotProps } from '../../../components/Bot';
 import Tooltip from './Tooltip';
 import { getBubbleButtonSize } from '@/utils';
 
-const defaultButtonColor = '#3B81F6';
-const defaultIconColor = 'white';
+const defaultButtonColor = 'transparent';
+const defaultIconColor = 'black';
 
 export type BubbleProps = BotProps & BubbleParams;
 
@@ -56,6 +56,8 @@ export const Bubble = (props: BubbleProps) => {
 
   const showTooltip = bubbleProps.theme?.tooltip?.showTooltip ?? false;
 
+  const regex = createMemo(() => /linear-gradient\(([^,]+),\s*([^,]+),\s*([^)]+)\)/);
+  console.log(bubbleProps, 'bubbleProps');
   return (
     <>
       <style>{styles}</style>
@@ -81,23 +83,30 @@ export const Bubble = (props: BubbleProps) => {
       <div
         part="bot"
         style={{
-          height: bubbleProps.theme?.chatWindow?.height ? `${bubbleProps.theme?.chatWindow?.height.toString()}px` : 'calc(100% - 150px)',
+          height: bubbleProps.theme?.chatWindow?.height ? `${bubbleProps.theme?.chatWindow?.height.toString()}px` : '80%',
           width: bubbleProps.theme?.chatWindow?.width ? `${bubbleProps.theme?.chatWindow?.width.toString()}px` : undefined,
           transition: 'transform 200ms cubic-bezier(0, 1.2, 1, 1), opacity 150ms ease-out',
           'transform-origin': 'bottom right',
           transform: isBotOpened() ? 'scale3d(1, 1, 1)' : 'scale3d(0, 0, 1)',
           'box-shadow': 'rgb(0 0 0 / 16%) 0px 5px 40px',
           'background-color': bubbleProps.theme?.chatWindow?.backgroundColor || '#ffffff',
-          'background-image': bubbleProps.theme?.chatWindow?.backgroundImage ? `url(${bubbleProps.theme?.chatWindow?.backgroundImage})` : 'none',
-          'background-size': 'cover',
-          'background-position': 'center',
+          'background-image': props.theme?.chatWindow?.backgroundColor
+            ? 'none'
+            : props.theme?.chatWindow?.backgroundImage
+              ? props.theme?.chatWindow?.backgroundImage.match(regex())
+                ? props.theme?.chatWindow?.backgroundImage
+                : `url(${props.theme?.chatWindow?.backgroundImage})`
+              : 'url(https://cdn.jsdelivr.net/gh/Ark6Rj/ChatEmbed/src/assets/bgc1.svg), url(https://cdn.jsdelivr.net/gh/Ark6Rj/ChatEmbed/src/assets/bgc2.png), linear-gradient(173deg, #f4f9ff -24.94%, #edf1f9 103.15%)',
+          'background-size': '100%',
+          'background-position': '100% 0',
+          'background-attachment': 'fixed',
           'background-repeat': 'no-repeat',
           'z-index': 42424242,
           bottom: `${Math.min(buttonPosition().bottom + buttonSize + 10, window.innerHeight - chatWindowBottom)}px`,
           right: `${Math.min(buttonPosition().right, window.innerWidth - 410)}px`,
         }}
         class={
-          `fixed sm:right-5 rounded-lg w-full sm:w-[400px] max-h-[704px]` +
+          `fixed sm:right-5 rounded-lg w-full sm:w-[439px]` +
           (isBotOpened() ? ' opacity-1' : ' opacity-0 pointer-events-none') +
           ` bottom-${chatWindowBottom}px`
         }
@@ -120,7 +129,7 @@ export const Bubble = (props: BubbleProps) => {
               </button>
             </Show>
             <Bot
-              badgeBackgroundColor={bubbleProps.theme?.chatWindow?.backgroundColor}
+              badgeBackgroundColor={bubbleProps.theme?.chatWindow?.backgroundColor || 'transparent'}
               bubbleBackgroundColor={bubbleProps.theme?.button?.backgroundColor ?? defaultButtonColor}
               bubbleTextColor={bubbleProps.theme?.button?.iconColor ?? defaultIconColor}
               showTitle={bubbleProps.theme?.chatWindow?.showTitle}
