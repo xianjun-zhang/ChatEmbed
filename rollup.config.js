@@ -9,16 +9,23 @@ import typescript from '@rollup/plugin-typescript';
 import { typescriptPaths } from 'rollup-plugin-typescript-paths';
 import commonjs from '@rollup/plugin-commonjs';
 import { uglify } from 'rollup-plugin-uglify';
-import serve from "rollup-plugin-serve";
-import livereload from "rollup-plugin-livereload";
+import serve from 'rollup-plugin-serve';
+import livereload from 'rollup-plugin-livereload';
 import html from '@rollup/plugin-html';
 import copy from 'rollup-plugin-copy';
-import image from '@rollup/plugin-image'
+import image from '@rollup/plugin-image';
+import url from '@rollup/plugin-url';
 
-const extensions = ['.ts', '.tsx', '.svg', '.png'];
+const extensions = ['.ts', '.tsx', '.svg', '.png', '.jpg', '.mp3'];
 
 const indexConfig = {
   plugins: [
+    url({
+      include: ['**/*.svg', '**/*.png', '**/*.jpg', '**/*.mp3'],
+      limit: 15 * 1024,
+      emitFiles: true,
+      fileName: 'assets/[name].[hash][extname]',
+    }),
     image(),
     resolve({ extensions, browser: true }),
     commonjs(),
@@ -44,13 +51,12 @@ const indexConfig = {
       targets: [
         {
           src: 'src/assets/**/*',
-          dest: 'dist/assets'
-        }
+          dest: 'dist/assets',
+        },
       ],
-      hook: 'writeBundle'
+      hook: 'writeBundle',
     }),
     terser({ output: { comments: false } }),
-    /* If you want to see the live app*/
     html({
       title: 'My App',
       fileName: 'index.html',
@@ -94,7 +100,7 @@ const indexConfig = {
   });
                                 </script>
                           </body>
-                        </html>`
+                        </html>`,
     }),
     serve({
       open: false,
@@ -102,14 +108,14 @@ const indexConfig = {
         console.log(`Dev server: http://localhost:${server.address().port}`);
       },
       verbose: true,
-      contentBase: ["dist"],
-      host: "localhost",
+      contentBase: ['dist'],
+      host: 'localhost',
       port: 5678,
     }),
     livereload({
-      watch: "dist",
+      watch: 'dist',
       clientUrl: 'http://localhost:35729/livereload.js?snipver=1',
-      verbose: true
+      verbose: true,
     }),
   ],
 };
@@ -121,7 +127,7 @@ const configs = [
     output: {
       file: 'dist/web.js',
       format: 'es',
-      assetFileNames: 'assets/[name][extname]'
+      assetFileNames: 'assets/[name][extname]',
     },
   },
 ];
