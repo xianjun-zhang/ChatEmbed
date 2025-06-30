@@ -1,7 +1,7 @@
 import { isMobile } from '@/utils/isMobileSignal';
 import { Show } from 'solid-js';
 import userIcon from '@/assets/user-icon-gradient.svg';
-import aiIcon from '@/assets/AI-bot-icon.png'; 
+import aiIcon from '@/assets/AI-bot-icon.png';
 
 type DefaultAvatarProps = {
   messageType?: 'userMessage' | 'apiMessage' | 'leadCaptureMessage';

@@ -84,7 +84,7 @@ export const LeadCaptureBubble = (props: Props) => {
   return (
     <div class="flex flex-row justify-start mb-2 items-start host-container" style={{ 'margin-right': '50px' }}>
       <Show when={props.showAvatar}>
-        <Avatar initialAvatarSrc={props.avatarSrc} />
+        <Avatar initialAvatarSrc={props.avatarSrc} messageType="userMessage" />
       </Show>
       <div
         class="px-3 py-3 ml-2 max-w-full chatbot-host-bubble prose"
