@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chatbot Bubble - Demo</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 12px;
+      padding: 30px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+    }
+    h1 {
+      color: #333;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .demo-section {
+      margin: 30px 0;
+      border: 2px dashed #e0e0e0;
+      border-radius: 8px;
+      padding: 20px;
+    }
+    .demo-section h2 {
+      color: #666;
+      margin-top: 0;
+    }
+    .code-example {
+      background: #f8f9fa;
+      border-radius: 6px;
+      padding: 15px;
+      margin: 15px 0;
+      font-family: 'Monaco', 'Menlo', monospace;
+      font-size: 14px;
+      overflow-x: auto;
+    }
+    .info {
+      background: #e8f5e8;
+      border-left: 4px solid #4caf50;
+      padding: 15px;
+      margin: 15px 0;
+      border-radius: 4px;
+    }
+    .navigation {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .nav-link {
+      display: inline-block;
+      margin: 0 15px;
+      padding: 10px 20px;
+      background: #f0f0f0;
+      color: #333;
+      text-decoration: none;
+      border-radius: 25px;
+      transition: all 0.3s ease;
+    }
+    .nav-link:hover {
+      background: #667eea;
+      color: white;
+    }
+    .nav-link.active {
+      background: #4caf50;
+      color: white;
+    }
+    .bubble-demo-area {
+      height: 300px;
+      background: #f9f9f9;
+      border-radius: 8px;
+      padding: 20px;
+      margin: 20px 0;
+      text-align: center;
+      border: 2px dashed #ccc;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="navigation">
+      <a href="/" class="nav-link">Full Chatbot Demo</a>
+      <a href="/bubble-demo.html" class="nav-link active">Bubble Demo</a>
+    </div>
+
+    <h1>💬 Chatbot Bubble - Demo</h1>
+    
+    <div class="info">
+      <strong>Bubble Demo:</strong> This page demonstrates the bubble chatbot embed - a floating widget that appears as a chat bubble on your website. Perfect for customer support and engagement!
+    </div>
+
+    <div class="demo-section">
+      <h2>Bubble Chatbot Demo</h2>
+      <p>The bubble chatbot appears as a floating button (usually in the bottom-right corner). Click it to start chatting!</p>
+      <div class="bubble-demo-area">
+        🎯 Look for the chat bubble in the bottom-right corner!
+        <br>
+        <small style="color: #999; margin-top: 10px; display: block;">
+          (The bubble chatbot will initialize automatically)
+        </small>
+      </div>
+      
+      <!-- The bubble chatbot will be created automatically by Chatbot.init() -->
+    </div>
+
+    <div class="demo-section">
+      <h2>Integration Code</h2>
+      <p>To add the bubble chatbot to your website, use this code:</p>
+      <div class="code-example">
+&lt;script type="module"&gt;
+  import Chatbot from 'https://cdn.jsdelivr.net/npm/bitflow-chatbot-embed/dist/web.js';
+  
+  // Note: Chatbot.init() creates the bubble element automatically
+  // No need for &lt;n-chatbot&gt; element in HTML
+  Chatbot.init({
+    chatflowid: 'your-chatflow-id',
+    apiHost: 'https://your-api-host.com',
+    theme: {
+      button: {
+        backgroundColor: '#3B81F6',
+        right: 20,
+        bottom: 20,
+        size: 'medium',
+        iconColor: 'white'
+      },
+      chatWindow: {
+        title: 'Chat with us!',
+        backgroundColor: '#ffffff'
+      }
+    }
+  });
+&lt;/script&gt;
+      </div>
+    </div>
+
+    <div class="demo-section">
+      <h2>Bubble vs Full Chatbot</h2>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px;">
+        <div style="padding: 15px; background: #f0f8ff; border-radius: 8px;">
+          <h3 style="margin-top: 0; color: #2196f3;">🫧 Bubble Chatbot</h3>
+          <ul style="font-size: 14px;">
+            <li>Floating chat button</li>
+            <li>Minimal screen space</li>
+            <li>Perfect for websites</li>
+            <li>Non-intrusive design</li>
+            <li>Expandable chat window</li>
+          </ul>
+        </div>
+        <div style="padding: 15px; background: #fff8f0; border-radius: 8px;">
+          <h3 style="margin-top: 0; color: #ff9800;">📱 Full Chatbot</h3>
+          <ul style="font-size: 14px;">
+            <li>Embedded in page content</li>
+            <li>Takes dedicated space</li>
+            <li>Perfect for dedicated chat pages</li>
+            <li>Always visible interface</li>
+            <li>Full-featured display</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    // Load the library from the built dist folder
+    import Chatbot from './web.js';
+    
+    // Initialize bubble chatbot with demo configuration
+    Chatbot.init({
+      chatflowid: '91e9c803-5169-4db9-8207-3c0915d71c5f',
+      apiHost: 'http://localhost:3000',
+      theme: {
+        button: {
+          backgroundColor: '#4caf50',
+          right: 20,
+          bottom: 20,
+          size: 'medium',
+          iconColor: 'white'
+        },
+        tooltip: {
+          showTooltip: true,
+          tooltipMessage: 'Hi! Need help? 💬',
+          tooltipBackgroundColor: '#4caf50',
+          tooltipTextColor: 'white',
+          tooltipFontSize: 16,
+        },
+        chatWindow: {
+          title: 'Support Chat',
+          textInput: {
+            enableMarkdown: true
+          },
+          userMessage: {
+            showAvatar: true,
+            avatarSrc: 'https://raw.githubusercontent.com/zahidkhawaja/langchain-chat-nextjs/main/public/usericon.png',
+          },
+          botMessage: {
+            showAvatar: true,
+            avatarSrc: 'https://raw.githubusercontent.com/zahidkhawaja/langchain-chat-nextjs/main/public/parroticon.png',
+          },
+        },
+      },
+    });
+  </script>
+</body>
+</html> 
