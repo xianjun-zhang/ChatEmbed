@@ -59,7 +59,7 @@ export const Bubble = (props: BubbleProps) => {
   const showTooltip = bubbleProps.theme?.tooltip?.showTooltip ?? false;
 
   const regex = createMemo(() => /linear-gradient\(([^,]+),\s*([^,]+),\s*([^)]+)\)/);
-  console.log(bubbleProps, 'bubbleProps');
+
   return (
     <>
       <style>{styles}</style>
