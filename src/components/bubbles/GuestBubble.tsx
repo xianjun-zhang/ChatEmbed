@@ -74,7 +74,7 @@ export const GuestBubble = (props: Props) => {
         )}
       </div>
       <Show when={props.showAvatar}>
-        <Avatar initialAvatarSrc={props.avatarSrc} />
+        <Avatar initialAvatarSrc={props.avatarSrc} messageType="userMessage" />
       </Show>
     </div>
   );
