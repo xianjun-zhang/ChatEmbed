@@ -1,0 +1,183 @@
+---
+description: **Auto-trigger when**: User requests PR description generation, commit message creation, or asks to "create/write/generate a pull request"
+globs: 
+alwaysApply: false
+---
+# Pull Request Generation Guidelines
+
+## Rule Description
+**Auto-trigger when**: User requests PR description generation, commit message creation, or asks to "create/write/generate a pull request"
+
+**Purpose**: Generate standardized Pull Request descriptions with proper formatting, logical organization, and appropriate technical detail level following project conventions.
+
+**Expected Output**: Well-structured PR description with `[type] [scope] title` format, 0-prefixed markdown headers, concise summary bullets, and logically grouped changes focusing on outcomes rather than implementation details.
+
+## Purpose
+This document provides standardized rules for generating Pull Request descriptions that are clear, concise, and follow consistent project conventions.
+
+## PR Title Format
+
+**Required Pattern**: `[type] [scope] description`
+
+- **Type**: Use standard types like `feat`, `fix`, `docs`, `refactor`, `test`, `chore`
+- **Scope**: Indicate the area of change like `[API]`, `[UI]`, `[Backend]`, `[Frontend]`, `[Database]`, `[Config]`
+- **Description**: Brief, descriptive title of the change
+
+**Examples**:
+- `[feat] [API] User authentication system implementation`
+- `[fix] [UI] Form validation error handling`
+- `[docs] [Backend] Update API documentation for endpoints`
+
+## PR Structure Requirements
+
+### Markdown Format Rules
+- Use standard markdown format
+- **Critical**: Add `0` prefix before all headers starting with `#`
+  - `# Summary` → `0# Summary`
+  - `# Changes` → `0# Changes`
+  - `## Section Title` → `0## Section Title`
+- Use backticks for technical terms: `GoogleToolkitBase`, `nodes-config.yaml`
+
+### Required Sections
+
+#### 1. Summary Section
+- **Format**: Bullet points using `-`
+- **Content**: Very brief overview of main changes
+- **Style**: High-level outcomes, not implementation details
+- **Length**: 2-4 bullet points maximum
+
+**Example**:
+```markdown
+0# Summary
+
+- Add user authentication system with JWT token support
+- Implement role-based access control for API endpoints
+
+<br>
+
+0# Changes
+
+0## 1. Authentication System Implementation
+  - Create user login/logout endpoints with JWT token generation
+  - Add middleware for token validation and user session management
+  - Implement password hashing and security measures
+```
+
+#### 2. Changes Section
+- **Format**: Header format `0## 1.`, `0## 2.`, `0## 3.`
+- **Structure**: Each item has a `0##` header with number and title, followed by sub-bullets with 2-space indentation
+- **Content**: Logical groupings of related changes
+- **Details**: Focus on what was achieved, not how it was implemented
+
+## Content Guidelines
+
+### What to Include
+- **Logical groupings**: Combine related changes into coherent sections
+- **Outcomes and value**: Focus on what was achieved
+- **Technical specifics**: Use backticks for file names, class names, APIs
+- **Configuration changes**: Always mention config updates
+
+### What to Avoid
+- **Implementation details**: Avoid "how" details unless critical
+- **Exhaustive lists**: Don't list every single file or function
+- **Minor changes section**: If changes aren't significant enough for main sections, omit them
+- **Redundant information**: Each bullet should add unique value
+
+### Grouping Strategy
+
+#### Effective Grouping Examples:
+- **Core Implementation**: Main classes, modules, integrations
+- **Feature Development**: Group similar functionality (e.g., "3 API endpoints, 2 UI components")
+- **Documentation**: Guide updates, examples, conventions
+- **Infrastructure**: Configuration files, deployment settings, database migrations
+
+#### Poor Grouping (Avoid):
+- Separating logically related items across sections
+- Creating sections for single items
+- Grouping by file type rather than functionality
+
+## Technical Term Formatting
+
+### Always Use Backticks For:
+- Class names: `UserService`, `AuthMiddleware`
+- File names: `config.json`, `database.sql`
+- API endpoints: `/api/users`, `/auth/login`
+- Function/method names: `validateUser`, `generateToken`
+- Configuration keys: `apiKey`, `databaseUrl`
+
+### Standard Terms (No Backticks):
+- Feature names: OAuth integration, error handling
+- Concepts: authentication, validation, workflows
+- General descriptions: server configuration, implementation guide
+
+## Quality Checklist
+
+Before finalizing PR description, verify:
+
+- [ ] Title follows `[type] [scope] description` pattern
+- [ ] All headers have `0` prefix (`0#` for main sections, `0##` for numbered items)
+- [ ] Summary is 2-4 brief bullet points
+- [ ] Line break `<br>` added before Changes section
+- [ ] Changes section has logical groupings (3-5 sections maximum)
+- [ ] Technical terms use backticks appropriately
+- [ ] Each bullet point adds unique value
+- [ ] Focus is on outcomes, not implementation details
+- [ ] No "minor changes" or trivial sections
+- [ ] Configuration and infrastructure changes are mentioned
+
+## Examples to Follow
+
+### Good PR Structure:
+```markdown
+[feat] [API] User authentication system implementation
+
+0# Summary
+
+- Add JWT-based user authentication with role-based access control
+- Implement secure password handling and session management
+
+<br>
+
+0# Changes
+
+0## 1. Authentication Core Implementation
+  - Create `AuthService` class with JWT token generation and validation
+  - Add user login/logout endpoints with proper error handling
+  - Implement password hashing using secure algorithms
+
+0## 2. Access Control and Middleware
+  - Add role-based permission middleware for protected routes
+  - Implement session management with token refresh functionality
+  - Create user authorization checks for different access levels
+
+0## 3. Security and Configuration
+  - Add security headers and input validation for auth endpoints
+  - Configure JWT secret management and token expiration settings
+  - Update API documentation with authentication flow examples
+```
+
+### Poor Structure (Avoid):
+```markdown
+[feat] Add calendar stuff
+
+0# Summary
+- Added lots of files for calendar
+- Updated some documentation
+- Fixed configuration issues
+- Made various improvements
+
+<br>
+
+0# Changes
+1. Created CalendarToolkit.ts file
+2. Added calendar-types.ts with interfaces  
+3. Created calendar-utils.ts utilities
+4. Added individual tool files
+5. Updated YAML configuration
+6. Minor changes
+   - Fixed spacing
+   - Updated comments
+   - Cleaned up imports
+```
+
+Remember: A good PR description should allow reviewers to quickly understand the value and scope of changes without getting lost in implementation details.

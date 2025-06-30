@@ -15,7 +15,7 @@ import url from '@rollup/plugin-url';
 import alias from '@rollup/plugin-alias';
 import path from 'path';
 
-const extensions = ['.ts', '.tsx', '.svg', '.png', '.jpg', '.mp3'];
+const extensions = ['.ts', '.tsx'];
 
 const isDevelopment = !!process.env.ROLLUP_WATCH;
 
@@ -28,7 +28,8 @@ const indexConfig = {
       include: ['**/*.svg', '**/*.png', '**/*.jpg', '**/*.mp3'],
       limit: 0, // Always emit files, never inline as data URLs
       emitFiles: true,
-      fileName: 'assets/[name].[hash][extname]',
+      fileName: 'assets/[name][extname]',
+      publicPath: '',
     }),
     resolve({
       extensions,
@@ -41,7 +42,7 @@ const indexConfig = {
     json(),
     babel({
       babelHelpers: 'bundled',
-      exclude: 'node_modules/**',
+      exclude: ['node_modules/**', '**/*.svg', '**/*.png', '**/*.jpg', '**/*.mp3'],
       presets: ['solid', '@babel/preset-typescript'],
       extensions,
     }),
