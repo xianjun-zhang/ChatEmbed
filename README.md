@@ -4,29 +4,29 @@
 
 Javascript library to display web chatbot on your website
 
-![Chatbot](https://github.com/xianjun-zhang/ChatEmbed/blob/main/images/ChatEmbed.gif?raw=true)
+![Chatbot](https://github.com/xianjun-zhang/ChatEmbed/blob/main/demo/ChatEmbed.mp4?raw=true)
 
 Install:
 
 ```bash
-yarn install
+pnpm install
 ```
 
 Dev:
 
 ```bash
-yarn dev
+pnpm dev   # or pnpm demo (build + dev)
 ```
 
 Build:
 
 ```bash
-yarn build
+pnpm build
 ```
 
 ## Embed in your HTML
 
-### PopUp
+### Bubble (Pop-up)
 
 ```html
 <script type="module">
@@ -38,7 +38,7 @@ yarn build
 </script>
 ```
 
-### FullPage
+### Full Page
 
 ```html
 <script type="module">
