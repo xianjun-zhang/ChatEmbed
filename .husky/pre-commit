@@ -1,18 +1,26 @@
 #!/usr/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
+# Husky pre-commit hook (v10-ready)
+set -e
 
-set -e # Exit on any error
+# 1️⃣ Lint (report only) — fails on errors, allows warnings
+pnpm lint
 
-echo "Running ESLint for linting..."
-npm run lint
+# 2️⃣ Auto-fix any remaining issues
+pnpm lint:fix
 
-echo "Running ESLint for fixing issues..."
-npm run lint-fix
+# 3️⃣ Apply Prettier formatting
+pnpm format
 
-echo "Formatting code..."
-npm run format
+# 4️⃣ Verify formatting (will fail commit if still off)
+pnpm format:check
 
-echo "Checking formatting..."
-npm run format:check
+echo "✅ Pre-commit checks passed"
 
-echo "Pre-commit checks passed."
+# Remove auto-staging – user decides what to add
+
+echo "🎨 Formatting"
+pnpm format                     # writes fixes
+
+# Optionally, run prettier check but do not fail commit
+echo "Pre-commit auto-fixes complete – review & stage desired files."
+exit 0

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chatbot Embed - Demo</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    .navigation {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .nav-link {
+      display: inline-block;
+      margin: 0 15px;
+      padding: 10px 20px;
+      background: #f0f0f0;
+      color: #333;
+      text-decoration: none;
+      border-radius: 25px;
+      transition: all 0.3s ease;
+    }
+    .nav-link:hover {
+      background: #2196f3;
+      color: white;
+    }
+    .nav-link.active {
+      background: #2196f3;
+      color: white;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 12px;
+      padding: 30px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+    h1 {
+      color: #333;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .demo-section {
+      margin: 30px 0;
+      border: 2px dashed #e0e0e0;
+      border-radius: 8px;
+      padding: 20px;
+    }
+    .demo-section h2 {
+      color: #666;
+      margin-top: 0;
+    }
+    .code-example {
+      background: #f8f9fa;
+      border-radius: 6px;
+      padding: 15px;
+      margin: 15px 0;
+      font-family: 'Monaco', 'Menlo', monospace;
+      font-size: 14px;
+      overflow-x: auto;
+    }
+    .info {
+      background: #e3f2fd;
+      border-left: 4px solid #2196f3;
+      padding: 15px;
+      margin: 15px 0;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="navigation">
+      <a href="/" class="nav-link active">Full Chatbot Demo</a>
+      <a href="/bubble-demo.html" class="nav-link">Bubble Demo</a>
+    </div>
+
+    <h1>🤖 Chatbot Embed Library - Demo</h1>
+    
+    <div class="info">
+      <strong>Full Chatbot Demo:</strong> This page demonstrates the full chatbot embed that takes up dedicated space on your page.
+      Perfect for dedicated chat pages or customer support interfaces. Also check out the <a href="/bubble-demo.html">Bubble Demo</a> for the floating widget version!
+    </div>
+
+    <div class="demo-section">
+      <h2>Full Chatbot Demo</h2>
+      <p>This demonstrates the full chatbot interface with custom theming:</p>
+      <n-fullchatbot></n-fullchatbot>
+    </div>
+
+    <div class="demo-section">
+      <h2>Integration Code</h2>
+      <p>To integrate this chatbot into your website, use the following code:</p>
+      <div class="code-example">
+&lt;script type="module"&gt;
+  import Chatbot from 'https://cdn.jsdelivr.net/npm/bitflow-chatbot-embed/dist/web.js';
+  
+  Chatbot.initFull({
+    chatflowid: 'your-chatflow-id',
+    apiHost: 'https://your-api-host.com',
+    theme: {
+      // Your theme configuration
+    }
+  });
+&lt;/script&gt;
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    // Load the library from the built dist folder
+    import Chatbot from './web.js';
+    
+    // Initialize with demo configuration
+    Chatbot.initFull({
+      chatflowid: '91e9c803-5169-4db9-8207-3c0915d71c5f',
+      apiHost: 'http://localhost:3000',
+      theme: {
+        tooltip: {
+          showTooltip: true,
+          tooltipMessage: 'Hi There 👋!',
+          tooltipBackgroundColor: 'black',
+          tooltipTextColor: 'white',
+          tooltipFontSize: 16,
+        },
+        chatWindow: {
+          title: 'Bot',
+          textInput: {
+            enableMarkdown: true
+          },
+          userMessage: {
+            showAvatar: true,
+            avatarSrc: 'https://raw.githubusercontent.com/zahidkhawaja/langchain-chat-nextjs/main/public/usericon.png',
+          },
+          botMessage: {
+            showAvatar: true,
+            avatarSrc: 'https://raw.githubusercontent.com/zahidkhawaja/langchain-chat-nextjs/main/public/parroticon.png',
+          },
+        },
+      },
+    });
+  </script>
+</body>
+</html> 
