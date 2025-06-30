@@ -175,12 +175,13 @@
 
   <script type="module">
     // Load the library from the built dist folder
+    import { DEMO_CONFIG } from './config.js';
     import Chatbot from './web.js';
     
     // Initialize bubble chatbot with demo configuration
     Chatbot.init({
-      chatflowid: '91e9c803-5169-4db9-8207-3c0915d71c5f',
-      apiHost: 'http://localhost:3000',
+      chatflowid: DEMO_CONFIG.chatflowid,
+      apiHost: DEMO_CONFIG.apiHost,
       theme: {
         button: {
           backgroundColor: '#4caf50',
