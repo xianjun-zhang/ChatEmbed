@@ -4,7 +4,16 @@
 
 Javascript library to display web chatbot on your website
 
-![Chatbot](https://github.com/xianjun-zhang/ChatEmbed/blob/main/demo/ChatEmbed.mp4?raw=true)
+## 🎥 Demo
+
+<!-- Method 2: HTML5 video tag -->
+<video width="100%" controls>
+  <source src="https://github.com/xianjun-zhang/ChatEmbed/raw/main/demo/ChatEmbed.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+  <a href="./demo/ChatEmbed.mp4">Download Demo Video</a>
+</video>
+
+## Development
 
 Install:
 
