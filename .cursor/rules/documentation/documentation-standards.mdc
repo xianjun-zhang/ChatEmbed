@@ -1,0 +1,115 @@
+---
+description: Standards for code, API, and project documentation in BitFlow.
+globs: 
+alwaysApply: false
+---
+# Documentation Standards
+
+## 1. Overview
+*   **Purpose:** To establish clear, consistent, and comprehensive documentation practices across the BitFlow project. Good documentation is crucial for maintainability, onboarding new developers, collaboration, and user understanding.
+*   **Goal:** Ensure all code, APIs, features, and architectural decisions are well-documented and easily accessible.
+*   **Principle:** Documentation is not an afterthought; it is an integral part of the development process.
+
+## 2. Code Documentation (Inline & Comments)
+*   **Language:** English.
+*   **Clarity and Conciseness:** Write comments that are easy to understand and to the point. Avoid overly verbose or cryptic comments.
+*   **TypeScript (JSDoc/TSDoc):**
+    *   Use TSDoc (`/** ... */`) for all exported functions, classes, methods, interfaces, types, and significant internal logic.
+    *   Document parameters (`@param`), return values (`@returns`), and thrown exceptions (`@throws`).
+    *   Provide a clear summary of what the code does.
+    *   Example:
+        ```typescript
+        /**
+         * Calculates the sum of two numbers.
+         * @param a - The first number.
+         * @param b - The second number.
+         * @returns The sum of a and b.
+         */
+        function add(a: number, b: number): number {
+          return a + b;
+        }
+        ```
+*   **Complex Logic:** Add comments to explain complex algorithms, business logic, or tricky workarounds.
+*   **TODOs and FIXMEs:**
+    *   Use `// TODO: [Description]` for planned enhancements or incomplete features.
+    *   Use `// FIXME: [Description]` for known bugs or areas needing correction.
+    *   Include a reference to an issue tracker item if available (e.g., `// TODO: #123 Fix this`).
+*   **Avoid Obvious Comments:** Do not comment on code that is self-explanatory.
+    *   Bad: `// Increment i
+i++;`
+*   **Keep Comments Up-to-Date:** When code changes, ensure associated comments are also updated.
+
+## 3. API Documentation (`packages/server`)
+*   **OpenAPI/Swagger:** Consider using OpenAPI (Swagger) specifications for REST APIs.
+    *   This allows for auto-generated documentation, client SDKs, and easier testing.
+    *   Can be integrated with Express using tools like `swagger-ui-express` and `swagger-jsdoc`.
+*   **Endpoint Documentation:** Each API endpoint should be documented with:
+    *   HTTP Method (GET, POST, PUT, DELETE, etc.).
+    *   URL Path.
+    *   Brief description of its purpose.
+    *   Request parameters (path, query, body) including types, whether required, and descriptions.
+    *   Example request body.
+    *   Response format including status codes and example response bodies (success and error).
+    *   Required authentication/authorization.
+*   **WebSocket Events:** Document WebSocket event names, payload structures (both client-to-server and server-to-client), and their purpose.
+
+## 4. Project-Level Documentation
+*   **`README.md` Files:**
+    *   **Root `README.md`:** High-level overview of BitFlow, what it is, core features, links to other important documentation (architecture, contributing, setup).
+    *   **Package `README.md` (`packages/ui/README.md`, etc.):** Specific information about that package, its purpose within the monorepo, how to build/run/test it, key dependencies, and its internal structure.
+*   **Architecture Documentation (`.cursor/rules/00-overview.mdc` or a dedicated `/docs` folder):
+    *   High-level system architecture diagrams.
+    *   Explanation of major components and their interactions.
+    *   Key design decisions and rationale.
+    *   Data flow diagrams.
+*   **Setup and Installation Guide (`.cursor/rules/01-workspace.mdc` or `CONTRIBUTING.md`):
+    *   Prerequisites.
+    *   Step-by-step instructions for setting up the development environment.
+    *   How to run the application locally.
+    *   Common troubleshooting tips.
+*   **Contribution Guidelines (`CONTRIBUTING.md`):
+    *   Coding standards (link to relevant Cursor rules or style guides).
+    *   Branching strategy.
+    *   Pull request process.
+    *   Commit message conventions.
+    *   How to run tests.
+*   **Deployment Guide:** Instructions on how to deploy the application to various environments (development, staging, production).
+*   **Troubleshooting Guide:** Common issues and their solutions.
+
+## 5. Feature Documentation
+*   For significant user-facing features, especially in `packages/ui` or complex backend flows, consider creating brief documentation or guides.
+*   This might be in a project wiki, a `/docs` folder, or as part of user-facing help materials.
+
+## 6. Style and Formatting
+*   **Markdown:** Use Markdown for all textual documentation files (`.md`, `.mdc`).
+*   **Consistent Formatting:** Maintain consistent headings, code block styling, lists, etc.
+*   **Grammar and Spelling:** Use spell checkers and grammar tools to ensure clarity and professionalism.
+
+## 7. Accessibility
+*   Ensure documentation is accessible (e.g., good contrast for diagrams, alt text for images where appropriate if generating HTML docs).
+
+## 8. Review Process
+*   Documentation changes should be part of the code review process.
+*   Review for accuracy, clarity, completeness, and adherence to these standards.
+
+## 9. Location of Documentation
+*   **Inline:** Within the code files themselves.
+*   **`README.md`:** At the root of the project and within each package.
+*   **`.cursor/rules/`:** For developer-focused context and guidelines for the AI.
+*   **Dedicated `/docs` folder (optional):** For more extensive, structured documentation (e.g., architecture, user guides). If created, link to it from the root `README.md`.
+*   **Project Wiki (optional):** For collaborative, less formal documentation.
+
+## 10. Tools
+*   **IDE Integration:** Leverage IDE features for TSDoc/JSDoc generation and viewing.
+*   **Linters/Formatters:** (e.g., ESLint, Prettier) to maintain code style that aids readability.
+*   **Documentation Generators (optional):** Tools like TypeDoc for TypeScript, JSDoc for JavaScript, Sphinx for Python (if ever applicable), or Docusaurus/GitBook for a dedicated documentation site.
+*   **Diagramming Tools:** Mermaid (for Markdown diagrams), Lucidchart, draw.io.
+
+## 11. Audience
+*   Consider the audience for each piece of documentation (e.g., new developers, experienced team members, end-users).
+*   Tailor the language and level of detail accordingly.
+
+## 12. Maintenance
+*   Documentation must be actively maintained and updated as the project evolves.
+*   Outdated documentation can be more harmful than no documentation.
+*   Schedule periodic reviews of key documentation to ensure accuracy. Identify a documentation owner or champion if possible.
