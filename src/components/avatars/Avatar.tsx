@@ -3,7 +3,7 @@ import { createEffect, createSignal, Show } from 'solid-js';
 import { isNotEmpty } from '@/utils/index';
 import { DefaultAvatar } from './DefaultAvatar';
 
-export const Avatar = (props: { initialAvatarSrc?: string }) => {
+export const Avatar = (props: { initialAvatarSrc?: string; messageType?: 'userMessage' | 'apiMessage' | 'leadCaptureMessage' }) => {
   const [avatarSrc, setAvatarSrc] = createSignal(props.initialAvatarSrc);
 
   createEffect(() => {
@@ -11,7 +11,7 @@ export const Avatar = (props: { initialAvatarSrc?: string }) => {
   });
 
   return (
-    <Show when={isNotEmpty(avatarSrc())} keyed fallback={<DefaultAvatar />}>
+    <Show when={isNotEmpty(avatarSrc())} keyed fallback={<DefaultAvatar messageType={props.messageType} />}>
       <figure
         class={
           'flex justify-center items-center rounded-full text-white relative flex-shrink-0 ' + (isMobile() ? 'w-6 h-6 text-sm' : 'w-10 h-10 text-xl')
