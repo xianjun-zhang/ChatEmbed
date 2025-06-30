@@ -11,7 +11,6 @@ import { uglify } from 'rollup-plugin-uglify';
 import serve from 'rollup-plugin-serve';
 import livereload from 'rollup-plugin-livereload';
 import copy from 'rollup-plugin-copy';
-import image from '@rollup/plugin-image';
 import url from '@rollup/plugin-url';
 import alias from '@rollup/plugin-alias';
 import path from 'path';
@@ -27,11 +26,10 @@ const indexConfig = {
     }),
     url({
       include: ['**/*.svg', '**/*.png', '**/*.jpg', '**/*.mp3'],
-      limit: 15 * 1024,
+      limit: 0, // Always emit files, never inline as data URLs
       emitFiles: true,
       fileName: 'assets/[name].[hash][extname]',
     }),
-    image(),
     resolve({
       extensions,
       browser: true,
