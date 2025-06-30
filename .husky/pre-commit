@@ -2,6 +2,9 @@
 # Husky pre-commit hook (v10-ready)
 set -e
 
+# Store list of staged files before any changes
+STAGED_FILES=$(git diff --cached --name-only)
+
 # 1️⃣ Lint (report only) — fails on errors, allows warnings
 pnpm lint
 
@@ -9,18 +12,22 @@ pnpm lint
 pnpm lint:fix
 
 # 3️⃣ Apply Prettier formatting
+echo "🎨 Formatting staged files..."
 pnpm format
 
-# 4️⃣ Verify formatting (will fail commit if still off)
+# 4️⃣ Auto-stage formatting changes for files that were already staged
+if [ -n "$STAGED_FILES" ]; then
+  echo "📦 Auto-staging formatting changes for previously staged files..."
+  for file in $STAGED_FILES; do
+    if [ -f "$file" ]; then
+      # Only add the file if it still exists and was originally staged
+      git add "$file"
+    fi
+  done
+fi
+
+# 5️⃣ Verify formatting (will fail commit if still off)
 pnpm format:check
 
 echo "✅ Pre-commit checks passed"
-
-# Remove auto-staging – user decides what to add
-
-echo "🎨 Formatting"
-pnpm format                     # writes fixes
-
-# Optionally, run prettier check but do not fail commit
-echo "Pre-commit auto-fixes complete – review & stage desired files."
-exit 0
+echo "✨ Formatting changes auto-staged for committed files only"
