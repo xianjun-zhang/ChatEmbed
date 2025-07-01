@@ -2,13 +2,15 @@ import styles from '../../../assets/index.css';
 import { Bot, BotProps } from '@/components/Bot';
 import { BubbleParams } from '@/features/bubble/types';
 import { createMemo, createSignal, onCleanup, onMount, Show } from 'solid-js';
-import bgc1 from '@/assets/bgc1.svg';
-import bgc2 from '@/assets/bgc2.png';
+import { getCDNAssetUrl } from '@/config/cdn';
 
 const defaultButtonColor = '#transparent';
 const defaultIconColor = 'black';
 
 export type FullProps = BotProps & BubbleParams;
+
+const bgc1 = getCDNAssetUrl('bgc1.svg');
+const bgc2 = getCDNAssetUrl('bgc2.png');
 
 export const Full = (props: FullProps, { element }: { element: HTMLElement }) => {
   const [isBotDisplayed, setIsBotDisplayed] = createSignal(false);

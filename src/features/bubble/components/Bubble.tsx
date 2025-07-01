@@ -5,13 +5,15 @@ import { BubbleParams } from '../types';
 import { Bot, BotProps } from '@/components/Bot';
 import Tooltip from './Tooltip';
 import { getBubbleButtonSize } from '@/utils';
-import bgc1 from '@/assets/bgc1.svg';
-import bgc2 from '@/assets/bgc2.png';
+import { getCDNAssetUrl } from '@/config/cdn';
 
 const defaultButtonColor = 'transparent';
 const defaultIconColor = 'black';
 
 export type BubbleProps = BotProps & BubbleParams;
+
+const bgc1 = getCDNAssetUrl('bgc1.svg');
+const bgc2 = getCDNAssetUrl('bgc2.png');
 
 export const Bubble = (props: BubbleProps) => {
   const [bubbleProps] = splitProps(props, ['theme']);

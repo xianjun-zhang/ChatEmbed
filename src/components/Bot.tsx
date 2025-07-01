@@ -18,8 +18,9 @@ import { CancelButton } from './buttons/CancelButton';
 import { cancelAudioRecording, startAudioRecording, stopAudioRecording } from '@/utils/audioRecording';
 import { LeadCaptureBubble } from '@/components/bubbles/LeadCaptureBubble';
 import { removeLocalStorageChatHistory, getLocalStorageChatflow, setLocalStorageChatflow } from '@/utils';
-import receiveSound from '@/assets/receive_message.mp3';
-// Use CDN URL for reliable asset loading
+import { getCDNAssetUrl } from '@/config/cdn';
+
+const receiveSound = getCDNAssetUrl('receive_message.mp3');
 
 export type FileEvent<T = Element> = {
   target: EventTarget & T;

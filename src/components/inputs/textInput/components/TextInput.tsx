@@ -5,8 +5,9 @@ import { SendButton } from '@/components/buttons/SendButton';
 import { FileEvent, UploadsConfig } from '@/components/Bot';
 import { ImageUploadButton } from '@/components/buttons/ImageUploadButton';
 import { RecordAudioButton } from '@/components/buttons/RecordAudioButton';
-import sendSound from '@/assets/send_message.mp3';
-// Use CDN URL for reliable asset loading
+import { getCDNAssetUrl } from '@/config/cdn';
+
+const sendSound = getCDNAssetUrl('send_message.mp3');
 
 type Props = {
   placeholder?: string;
