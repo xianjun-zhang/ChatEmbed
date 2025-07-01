@@ -1,7 +1,9 @@
 import { isMobile } from '@/utils/isMobileSignal';
 import { Show } from 'solid-js';
-import userIcon from '@/assets/user-icon-gradient.svg';
-import aiIcon from '@/assets/AI-bot-icon.png';
+import { getCDNAssetUrl } from '@/config/cdn';
+
+const userIcon = getCDNAssetUrl('user-icon-gradient.svg');
+const aiIcon = getCDNAssetUrl('AI-bot-icon.png');
 
 type DefaultAvatarProps = {
   messageType?: 'userMessage' | 'apiMessage' | 'leadCaptureMessage';

@@ -11,65 +11,16 @@ import { uglify } from 'rollup-plugin-uglify';
 import serve from 'rollup-plugin-serve';
 import livereload from 'rollup-plugin-livereload';
 import copy from 'rollup-plugin-copy';
-import url from '@rollup/plugin-url';
 import alias from '@rollup/plugin-alias';
 import path from 'path';
 
 const extensions = ['.ts', '.tsx'];
-
 const isDevelopment = !!process.env.ROLLUP_WATCH;
-
-// Custom plugin to handle CDN asset resolution
-const cdnAssetResolver = () => ({
-  name: 'cdn-asset-resolver',
-  generateBundle(options, bundle) {
-    for (const [fileName, chunk] of Object.entries(bundle)) {
-      if (chunk.type === 'chunk' && chunk.isEntry) {
-        // Add runtime asset resolution at the beginning of the entry chunk
-        const runtimeCode = `
-// CDN Asset Resolver - Dynamically resolve asset paths relative to script location
-(function() {
-  var scriptElement = document.currentScript || (function() {
-    var scripts = document.getElementsByTagName('script');
-    return scripts[scripts.length - 1];
-  })();
-  
-  if (scriptElement && scriptElement.src) {
-    var scriptUrl = new URL(scriptElement.src);
-    var baseUrl = scriptUrl.href.substring(0, scriptUrl.href.lastIndexOf('/') + 1);
-    
-    // Create a global asset resolver
-    window.__resolveAsset = function(assetPath) {
-      return assetPath.startsWith('assets/') ? baseUrl + assetPath : assetPath;
-    };
-  } else {
-    // Fallback for when script detection fails
-    window.__resolveAsset = function(assetPath) { return assetPath; };
-  }
-})();
-`;
-
-        // Prepend the runtime code
-        chunk.code = runtimeCode + chunk.code;
-
-        // Replace all asset references with dynamic resolution calls
-        chunk.code = chunk.code.replace(/"assets\/([^"]+)"/g, 'window.__resolveAsset("assets/$1")');
-      }
-    }
-  },
-});
 
 const indexConfig = {
   plugins: [
     alias({
       entries: [{ find: '@', replacement: path.resolve(process.cwd(), 'src') }],
-    }),
-    url({
-      include: ['**/*.svg', '**/*.png', '**/*.jpg', '**/*.mp3'],
-      limit: 0, // Always emit files, never inline as data URLs
-      emitFiles: true,
-      fileName: 'assets/[name][extname]',
-      publicPath: '',
     }),
     resolve({
       extensions,
@@ -82,7 +33,7 @@ const indexConfig = {
     json(),
     babel({
       babelHelpers: 'bundled',
-      exclude: ['node_modules/**', '**/*.svg', '**/*.png', '**/*.jpg', '**/*.mp3'],
+      exclude: 'node_modules/**',
       presets: ['solid', '@babel/preset-typescript'],
       extensions,
     }),
@@ -104,7 +55,6 @@ const indexConfig = {
       ],
       hook: 'writeBundle',
     }),
-    cdnAssetResolver(),
     terser({ output: { comments: false } }),
 
     // Development-only plugins (only included during --watch mode)
