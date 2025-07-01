@@ -15,10 +15,12 @@ import { Avatar } from '@/components/avatars/Avatar';
 import { DeleteButton, SendButton } from '@/components/buttons/SendButton';
 import { CircleDotIcon, TrashIcon } from './icons';
 import { CancelButton } from './buttons/CancelButton';
+import { StopButton } from './buttons/StopButton';
 import { cancelAudioRecording, startAudioRecording, stopAudioRecording } from '@/utils/audioRecording';
 import { LeadCaptureBubble } from '@/components/bubbles/LeadCaptureBubble';
 import { removeLocalStorageChatHistory, getLocalStorageChatflow, setLocalStorageChatflow } from '@/utils';
 import { getCDNAssetUrl } from '@/config/cdn';
+import { RecordingIndicator, SoundWaveAnimation } from './recording';
 
 const receiveSound = getCDNAssetUrl('receive_message.mp3');
 
@@ -250,7 +252,13 @@ export const Bot = (botProps: BotProps & { class?: string }) => {
   const [elapsedTime, setElapsedTime] = createSignal('00:00');
   const [isRecording, setIsRecording] = createSignal(false);
   const [recordingNotSupported, setRecordingNotSupported] = createSignal(false);
+  const [recordingPreview, setRecordingPreview] = createSignal<Blob | null>(null);
   const [isLoadingRecording, setIsLoadingRecording] = createSignal(false);
+  const [isPlayingPreview, setIsPlayingPreview] = createSignal(false);
+  const [previewAudioUrl, setPreviewAudioUrl] = createSignal<string | null>(null);
+  const [isSendingAudio, setIsSendingAudio] = createSignal(false);
+  const [sendingProgress, setSendingProgress] = createSignal(0);
+  const [sendSuccess, setSendSuccess] = createSignal(false);
 
   // drag & drop
   const [isDragActive, setIsDragActive] = createSignal(false);
@@ -737,7 +745,7 @@ export const Bot = (botProps: BotProps & { class?: string }) => {
       const base64data = reader.result as FilePreviewData;
       const upload: FilePreview = {
         data: base64data,
-        preview: '../assets/wave-sound.jpg',
+        preview: '', // Not used for audio previews
         type: 'audio',
         name: `audio_${Date.now()}.wav`,
         mime: mimeType,
@@ -834,7 +842,7 @@ export const Bot = (botProps: BotProps & { class?: string }) => {
               const { result } = evt.target;
               let previewUrl;
               if (file.type.startsWith('audio/')) {
-                previewUrl = '../assets/wave-sound.jpg';
+                previewUrl = ''; // Not used for audio previews
               } else if (file.type.startsWith('image/')) {
                 previewUrl = URL.createObjectURL(file);
               }
@@ -902,14 +910,175 @@ export const Bot = (botProps: BotProps & { class?: string }) => {
   };
 
   const onRecordingCancelled = () => {
-    if (!recordingNotSupported) cancelAudioRecording();
+    // Always call cancelAudioRecording to clean up MediaRecorder/streams regardless of recordingNotSupported state
+    cancelAudioRecording();
     setIsRecording(false);
     setRecordingNotSupported(false);
   };
 
   const onRecordingStopped = async () => {
-    setIsLoadingRecording(true);
-    stopAudioRecording(addRecordingToPreviews);
+    console.log('Stop button clicked - stopping recording');
+    // Stop recording and transition to preview state
+    try {
+      // Create a callback function to capture the audio blob
+      const captureAudioBlob = (blob: Blob) => {
+        // Store the recorded audio blob
+        setRecordingPreview(() => blob);
+
+        // Create object URL for preview playback
+        const audioUrl = URL.createObjectURL(blob);
+        setPreviewAudioUrl(audioUrl);
+
+        // Transition to preview state
+        setIsRecording(false);
+        setElapsedTime('00:00');
+
+        console.log('Recording stopped and saved for preview');
+      };
+
+      // Call stopAudioRecording with our callback
+      stopAudioRecording(captureAudioBlob);
+    } catch (error) {
+      console.error('Error stopping recording:', error);
+      // Fallback to cancel if stop fails
+      onRecordingCancelled();
+    }
+  };
+
+  const onRecordingCompleted = async () => {
+    console.log('Send button clicked - completing and sending recording');
+    const audioBlob = recordingPreview();
+    if (!audioBlob) {
+      console.error('No audio blob available to send');
+      return;
+    }
+
+    // Start sending animation
+    setIsSendingAudio(true);
+    setSendingProgress(0);
+    setSendSuccess(false);
+
+    // Stop any playing preview audio
+    if (isPlayingPreview()) {
+      setIsPlayingPreview(false);
+    }
+
+    try {
+      // Animate progress while preparing to send
+      const progressInterval = setInterval(() => {
+        setSendingProgress((prev) => {
+          if (prev >= 85) {
+            clearInterval(progressInterval);
+            return 85; // Stop at 85% until actual send starts
+          }
+          return prev + Math.random() * 10; // Random progress increments
+        });
+      }, 80);
+
+      // Small delay to show initial animation, then trigger actual send
+      setTimeout(() => {
+        clearInterval(progressInterval);
+
+        // Add recording to previews (which will trigger the send via createEffect)
+        addRecordingToPreviews(audioBlob);
+
+        // Complete progress animation
+        setSendingProgress(100);
+        setSendSuccess(true);
+
+        // Show success state briefly, then cleanup
+        setTimeout(() => {
+          // Clean up preview audio URL
+          const audioUrl = previewAudioUrl();
+          if (audioUrl) {
+            URL.revokeObjectURL(audioUrl);
+            setPreviewAudioUrl(null);
+          }
+
+          // Reset all states
+          setRecordingPreview(null);
+          setIsSendingAudio(false);
+          setSendingProgress(0);
+          setSendSuccess(false);
+          setIsLoadingRecording(false);
+
+          // Reset recording states to idle
+          setIsRecording(false);
+          setRecordingNotSupported(false);
+        }, 600); // Brief success state display
+      }, 400); // Brief delay to show progress animation
+    } catch (error) {
+      console.error('Error sending audio:', error);
+      // Reset on error
+      setIsSendingAudio(false);
+      setSendingProgress(0);
+      setSendSuccess(false);
+    }
+  };
+
+  const onRecordingDeleted = () => {
+    console.log('Delete button clicked - deleting recording preview');
+
+    // Clean up preview audio URL
+    const audioUrl = previewAudioUrl();
+    if (audioUrl) {
+      URL.revokeObjectURL(audioUrl);
+      setPreviewAudioUrl(null);
+    }
+
+    // Stop any playing preview audio
+    if (isPlayingPreview()) {
+      setIsPlayingPreview(false);
+    }
+
+    // Clean up recording resources
+    cancelAudioRecording();
+
+    // Reset all recording states
+    setRecordingPreview(null);
+    setIsRecording(false);
+    setRecordingNotSupported(false);
+    setElapsedTime('00:00');
+  };
+
+  const onPreviewPlayToggle = () => {
+    console.log('Play/Pause button clicked');
+    const audioUrl = previewAudioUrl();
+    if (!audioUrl) {
+      console.error('No audio URL available for preview');
+      return;
+    }
+
+    if (isPlayingPreview()) {
+      // Pause audio
+      setIsPlayingPreview(false);
+      console.log('Audio preview paused');
+    } else {
+      // Play audio
+      const audio = new Audio(audioUrl);
+      audio
+        .play()
+        .then(() => {
+          setIsPlayingPreview(true);
+          console.log('Audio preview started');
+
+          // Handle audio end
+          audio.addEventListener('ended', () => {
+            setIsPlayingPreview(false);
+            console.log('Audio preview ended');
+          });
+
+          // Handle audio error
+          audio.addEventListener('error', (e) => {
+            console.error('Audio preview error:', e);
+            setIsPlayingPreview(false);
+          });
+        })
+        .catch((error) => {
+          console.error('Failed to play audio preview:', error);
+          setIsPlayingPreview(false);
+        });
+    }
   };
 
   const getInputDisabled = (): boolean => {
@@ -926,13 +1095,13 @@ export const Bot = (botProps: BotProps & { class?: string }) => {
   };
 
   createEffect(
-    // listen for changes in previews
+    // listen for changes in previews - handle successful message send
     on(previews, (uploads) => {
-      // wait for audio recording to load and then send
+      // Check if audio was successfully added to previews (after send)
       const containsAudio = uploads.filter((item) => item.type === 'audio').length > 0;
       if (uploads.length >= 1 && containsAudio) {
-        setIsRecording(false);
-        setRecordingNotSupported(false);
+        // Audio has been successfully added to previews, now send the message
+        // This happens after our modern send UI completes
         promptClick('');
       }
 
@@ -941,6 +1110,16 @@ export const Bot = (botProps: BotProps & { class?: string }) => {
       };
     }),
   );
+
+  // Cleanup preview audio URL when component unmounts or recording changes
+  createEffect(() => {
+    return () => {
+      const audioUrl = previewAudioUrl();
+      if (audioUrl) {
+        URL.revokeObjectURL(audioUrl);
+      }
+    };
+  });
   return (
     <>
       <div
@@ -1127,7 +1306,7 @@ export const Bot = (botProps: BotProps & { class?: string }) => {
                           <TrashIcon />
                         </span>
                       </button>
-                    ) : (
+                    ) : item.mime.startsWith('audio/') ? (
                       <div
                         class={`inline-flex basis-auto flex-grow-0 flex-shrink-0 justify-between items-center rounded-xl h-12 p-1 mr-1 bg-gray-500`}
                         style={{
@@ -1136,10 +1315,19 @@ export const Bot = (botProps: BotProps & { class?: string }) => {
                           }px`,
                         }}
                       >
-                        <audio class="block bg-cover bg-center w-full h-full rounded-none text-transparent" controls src={item.data as string} />
+                        <div class="flex items-center gap-2 flex-1">
+                          <div class="w-8 h-8 flex items-center justify-center">
+                            <SoundWaveAnimation color="bg-white" barCount={5} class="scale-75" />
+                          </div>
+                          <audio class="block bg-cover bg-center flex-1 h-full rounded-none text-transparent" controls src={item.data as string} />
+                        </div>
                         <button class="w-7 h-7 flex items-center justify-center bg-transparent p-1" onClick={() => handleDeletePreview(item)}>
                           <TrashIcon color="white" />
                         </button>
+                      </div>
+                    ) : (
+                      <div class="w-12 h-12 flex items-center justify-center bg-gray-300 rounded-[10px]">
+                        <span class="text-xs text-gray-600">{item.name.split('.').pop()}</span>
                       </div>
                     )}
                   </>
@@ -1148,7 +1336,133 @@ export const Bot = (botProps: BotProps & { class?: string }) => {
             </div>
           </Show>
           <div class="w-full px-5 pt-2 pb-1">
-            {isRecording() ? (
+            {recordingPreview() ? (
+              // State 3: Recording Preview - Aligned with input bar style
+              <div
+                class="h-[58px] flex items-center justify-between chatbot-input border border-[#eeeeee] relative overflow-hidden"
+                data-testid="recording-preview"
+                style={{
+                  margin: 'auto',
+                  'background-color': props.textInput?.backgroundColor ?? defaultBackgroundColor,
+                  color: props.textInput?.textColor ?? defaultTextColor,
+                }}
+              >
+                {/* Progress Overlay - Only show during sending */}
+                {isSendingAudio() && (
+                  <div
+                    class="absolute inset-0 bg-blue-50 bg-opacity-80 transition-all duration-200"
+                    style={{
+                      background: `linear-gradient(to right, rgba(59, 130, 246, 0.1) ${sendingProgress()}%, transparent ${sendingProgress()}%)`,
+                    }}
+                  />
+                )}
+
+                {/* Audio Preview Content */}
+                <div
+                  class={`flex items-center gap-3 flex-1 px-4 relative z-10 transition-opacity duration-200 ${isSendingAudio() ? 'opacity-60' : 'opacity-100'}`}
+                >
+                  {/* Play/Pause Button or Sending Indicator */}
+                  {isSendingAudio() ? (
+                    <div class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center flex-shrink-0">
+                      {sendSuccess() ? (
+                        // Success checkmark
+                        <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z" />
+                        </svg>
+                      ) : (
+                        // Spinning loader
+                        <div class="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      )}
+                    </div>
+                  ) : (
+                    <button
+                      class="w-8 h-8 rounded-full bg-blue-500 hover:bg-blue-600 flex items-center justify-center flex-shrink-0 transition-colors duration-200"
+                      type="button"
+                      onClick={onPreviewPlayToggle}
+                      title={isPlayingPreview() ? 'Pause recording' : 'Play recording'}
+                      disabled={isSendingAudio()}
+                    >
+                      {isPlayingPreview() ? (
+                        // Pause icon
+                        <svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z" />
+                        </svg>
+                      ) : (
+                        // Play icon
+                        <svg class="w-3 h-3 text-white ml-0.5" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M8 5v14l11-7z" />
+                        </svg>
+                      )}
+                    </button>
+                  )}
+
+                  {/* Text and Animation on same line */}
+                  <div class="flex items-center gap-3 flex-1 min-w-0">
+                    <span class="text-sm font-medium text-gray-700 whitespace-nowrap">
+                      {isSendingAudio() ? (sendSuccess() ? 'Sent!' : 'Sending...') : 'Voice message • Ready to send'}
+                    </span>
+                    <div class="flex items-center">
+                      <SoundWaveAnimation color={isSendingAudio() && !sendSuccess() ? 'bg-blue-300' : 'bg-blue-400'} barCount={6} class="scale-75" />
+                    </div>
+                  </div>
+
+                  {/* Delete Button - Always visible but disabled during sending */}
+                  <button
+                    class={`w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 flex-shrink-0 ${
+                      isSendingAudio() ? 'bg-gray-50 cursor-not-allowed opacity-50' : 'bg-gray-100 hover:bg-red-50 hover:scale-105'
+                    }`}
+                    type="button"
+                    onClick={() => !isSendingAudio() && onRecordingDeleted()}
+                    title="Delete recording"
+                    disabled={isSendingAudio()}
+                  >
+                    <TrashIcon color={isSendingAudio() ? '#9ca3af' : '#ef4444'} class="w-4 h-4" />
+                  </button>
+                </div>
+
+                {/* Send Button */}
+                <div class="flex items-center px-2 relative z-10">
+                  {isSendingAudio() ? (
+                    <div class="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center">
+                      {sendSuccess() ? (
+                        // Success checkmark
+                        <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z" />
+                        </svg>
+                      ) : (
+                        // Circular progress
+                        <div class="relative w-6 h-6">
+                          <svg class="w-6 h-6 transform -rotate-90" viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="2" fill="none" class="text-blue-200" />
+                            <circle
+                              cx="12"
+                              cy="12"
+                              r="8"
+                              stroke="currentColor"
+                              stroke-width="2"
+                              fill="none"
+                              class="text-white transition-all duration-200"
+                              stroke-dasharray={`${2 * Math.PI * 8}`}
+                              stroke-dashoffset={`${2 * Math.PI * 8 * (1 - sendingProgress() / 100)}`}
+                              stroke-linecap="round"
+                            />
+                          </svg>
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <SendButton
+                      sendButtonColor={props.textInput?.sendButtonColor}
+                      type="button"
+                      isDisabled={loading()}
+                      class="m-0"
+                      on:click={onRecordingCompleted}
+                    />
+                  )}
+                </div>
+              </div>
+            ) : isRecording() ? (
+              // State 2: Recording Active
               <>
                 {recordingNotSupported() ? (
                   <div class="w-full flex items-center justify-between p-4 border border-[#eeeeee]">
@@ -1166,38 +1480,35 @@ export const Bot = (botProps: BotProps & { class?: string }) => {
                 ) : (
                   <div
                     class="h-[58px] flex items-center justify-between chatbot-input border border-[#eeeeee]"
-                    data-testid="input"
+                    data-testid="recording-active"
                     style={{
                       margin: 'auto',
                       'background-color': props.textInput?.backgroundColor ?? defaultBackgroundColor,
                       color: props.textInput?.textColor ?? defaultTextColor,
                     }}
                   >
-                    <div class="flex items-center gap-3 px-4 py-2">
-                      <span>
-                        <CircleDotIcon color="red" />
-                      </span>
-                      <span>{elapsedTime() || '00:00'}</span>
-                      {isLoadingRecording() && <span class="ml-1.5">Sending...</span>}
-                    </div>
-                    <div class="flex items-center">
-                      <CancelButton buttonColor={props.textInput?.sendButtonColor} type="button" class="m-0" on:click={onRecordingCancelled}>
-                        <span style={{ 'font-family': 'Poppins, sans-serif' }}>Send</span>
-                      </CancelButton>
-                      <SendButton
-                        sendButtonColor={props.textInput?.sendButtonColor}
+                    <RecordingIndicator elapsedTime={elapsedTime() || '00:00'} isLoading={isLoadingRecording()} />
+                    <div class="flex items-center gap-2">
+                      <CancelButton
+                        buttonColor={props.textInput?.sendButtonColor}
                         type="button"
-                        isDisabled={loading()}
+                        class="m-0"
+                        on:click={onRecordingCancelled}
+                        title="Cancel recording"
+                      />
+                      <StopButton
+                        buttonColor={props.textInput?.sendButtonColor}
+                        type="button"
                         class="m-0"
                         on:click={onRecordingStopped}
-                      >
-                        <span style={{ 'font-family': 'Poppins, sans-serif' }}>Send</span>
-                      </SendButton>
+                        title="Stop recording"
+                      />
                     </div>
                   </div>
                 )}
               </>
             ) : (
+              // State 1: Idle (unchanged)
               <TextInput
                 backgroundColor={props.textInput?.backgroundColor}
                 textColor={props.textInput?.textColor}
