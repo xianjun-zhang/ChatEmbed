@@ -1398,12 +1398,12 @@ export const Bot = (botProps: BotProps & { class?: string }) => {
 
                   {/* Text and Animation on same line */}
                   <div class="flex items-center gap-3 flex-1 min-w-0 overflow-hidden">
-                    <span class="text-sm font-medium text-gray-700 whitespace-nowrap truncate">
-                      {isSendingAudio() ? (sendSuccess() ? 'Sent!' : 'Sending...') : 'Voice message • Ready to send'}
-                    </span>
                     <div class="flex items-center flex-shrink-0">
                       <SoundWaveAnimation color={isSendingAudio() && !sendSuccess() ? 'bg-blue-300' : 'bg-blue-400'} barCount={6} class="scale-75" />
                     </div>
+                    <span class="text-sm font-medium text-gray-700 whitespace-nowrap truncate">
+                      {isSendingAudio() ? (sendSuccess() ? 'Sent!' : 'Sending...') : 'Ready to send'}
+                    </span>
                   </div>
 
                   {/* Delete Button - Always visible but disabled during sending */}
