@@ -30,6 +30,19 @@ Build:
 pnpm build
 ```
 
+## Test Locally
+
+Use the demo pages to test your changes during development.
+
+- Quick start: `pnpm demo` (builds the library and starts the dev server)
+- Manual: `pnpm build` then `pnpm dev`
+- Open in browser:
+  - Full Chatbot Demo: http://localhost:5678/ (or http://localhost:5678/index.html)
+  - Bubble Chatbot Demo: http://localhost:5678/bubble-demo.html
+  - Library Bundle: http://localhost:5678/web.js
+
+For more details and tips, see `demo/README.md`.
+
 ## Embed in your HTML
 
 ### Bubble (Pop-up)

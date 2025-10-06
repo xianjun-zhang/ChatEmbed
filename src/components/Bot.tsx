@@ -1335,7 +1335,7 @@ export const Bot = (botProps: BotProps & { class?: string }) => {
               </For>
             </div>
           </Show>
-          <div class="w-full px-5 pt-2 pb-1">
+          <div class="w-full px-5 pt-2 pb-1 overflow-x-hidden">
             {recordingPreview() ? (
               // State 3: Recording Preview - Aligned with input bar style
               <div
@@ -1359,7 +1359,7 @@ export const Bot = (botProps: BotProps & { class?: string }) => {
 
                 {/* Audio Preview Content */}
                 <div
-                  class={`flex items-center gap-3 flex-1 px-4 relative z-10 transition-opacity duration-200 ${isSendingAudio() ? 'opacity-60' : 'opacity-100'}`}
+                  class={`flex items-center gap-3 flex-1 px-4 relative z-10 transition-opacity duration-200 min-w-0 overflow-hidden ${isSendingAudio() ? 'opacity-60' : 'opacity-100'}`}
                 >
                   {/* Play/Pause Button or Sending Indicator */}
                   {isSendingAudio() ? (
@@ -1397,13 +1397,13 @@ export const Bot = (botProps: BotProps & { class?: string }) => {
                   )}
 
                   {/* Text and Animation on same line */}
-                  <div class="flex items-center gap-3 flex-1 min-w-0">
-                    <span class="text-sm font-medium text-gray-700 whitespace-nowrap">
-                      {isSendingAudio() ? (sendSuccess() ? 'Sent!' : 'Sending...') : 'Voice message • Ready to send'}
-                    </span>
-                    <div class="flex items-center">
+                  <div class="flex items-center gap-3 flex-1 min-w-0 overflow-hidden">
+                    <div class="flex items-center flex-shrink-0">
                       <SoundWaveAnimation color={isSendingAudio() && !sendSuccess() ? 'bg-blue-300' : 'bg-blue-400'} barCount={6} class="scale-75" />
                     </div>
+                    <span class="text-sm font-medium text-gray-700 whitespace-nowrap truncate">
+                      {isSendingAudio() ? (sendSuccess() ? 'Sent!' : 'Sending...') : 'Ready to send'}
+                    </span>
                   </div>
 
                   {/* Delete Button - Always visible but disabled during sending */}
